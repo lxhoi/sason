@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Montserrat } from "next/font/google";
 import { SmoothScroll } from "@/components/smooth-scroll";
-import { SiteFooter } from "@/components/site-footer";
+import { ConditionalFooter } from "@/components/conditional-footer";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -35,7 +35,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full bg-cream font-sans text-forest">
         <SmoothScroll />
         {children}
-        <SiteFooter />
+        <ConditionalFooter />
       </body>
     </html>
   );

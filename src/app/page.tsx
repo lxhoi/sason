@@ -5,12 +5,14 @@ import { SiteHeader } from "@/components/site-header";
 import { Reveal } from "@/components/reveal";
 import { Button } from "@/components/ui/button";
 import { BrandMark } from "@/components/logo";
+import { DevRedirect } from "@/components/dev-redirect";
 import { rooms, offers } from "@/lib/data";
 import { formatCurrency } from "@/lib/utils";
 
 export default function Home() {
   return (
     <>
+      <DevRedirect />
       <SiteHeader transparent />
       <Hero />
 
