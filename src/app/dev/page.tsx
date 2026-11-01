@@ -2,16 +2,15 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  Map, Palette, GitBranch, Play,
+  Map, Palette, Play,
   RotateCcw, ExternalLink,
   Monitor, Tablet, Smartphone,
   ChevronLeft, ChevronRight, ChevronDown, Check
 } from "lucide-react";
 import { SitemapTab } from "@/components/dev-panel/sitemap-tab";
 import { DesignSystemTab } from "@/components/dev-panel/design-system-tab";
-import { UserFlowTab } from "@/components/dev-panel/user-flow-tab";
 
-type View = "prototype" | "flow" | "design" | "sitemap";
+type View = "prototype" | "design" | "sitemap";
 
 const PROTOTYPE_SCREENS = [
   { id: "home",            num: "1",  label: "Trang chủ (Home)",                 href: "/" },
@@ -236,19 +235,6 @@ export default function DevPage() {
             <span>Interactive Prototype</span>
           </button>
 
-          {/* User Flow Board */}
-          <button
-            onClick={() => setView("flow")}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-all shrink-0 ${
-              view === "flow"
-                ? "bg-indigo-600 text-white shadow-md shadow-indigo-500/20 ring-1 ring-indigo-400/30"
-                : "border border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
-            }`}
-          >
-            <GitBranch className="h-3.5 w-3.5" />
-            <span>User Flow Board</span>
-          </button>
-
           {/* Design System */}
           <button
             onClick={() => setView("design")}
@@ -350,21 +336,14 @@ export default function DevPage() {
           </div>
         </div>
 
-        {/* 2. User Flow Board Canvas */}
-        {view === "flow" && (
-          <div data-lenis-prevent className="h-full w-full min-h-0 overflow-y-auto overscroll-contain bg-[#0d1017] pb-24">
-            <UserFlowTab onNavigate={navigatePrototype} />
-          </div>
-        )}
-
-        {/* 3. Design System Board Canvas */}
+        {/* 2. Design System Board Canvas */}
         {view === "design" && (
           <div data-lenis-prevent className="h-full w-full min-h-0 overflow-y-auto overscroll-contain bg-[#0d1017] pb-24">
             <DesignSystemTab />
           </div>
         )}
 
-        {/* 4. Sitemap Board Canvas */}
+        {/* 3. Sitemap Board Canvas */}
         {view === "sitemap" && (
           <div data-lenis-prevent className="h-full w-full min-h-0 overflow-y-auto overscroll-contain bg-[#0d1017] pb-24">
             <SitemapTab onNavigate={navigatePrototype} currentUrl={currentPath} />
