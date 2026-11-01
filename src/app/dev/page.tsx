@@ -28,7 +28,8 @@ const PROTOTYPE_SCREENS = [
   { id: "gallery",         num: "10", label: "Gallery (Thư viện ảnh)",           href: "/gallery" },
   { id: "offers",          num: "11", label: "Exclusive Offers (Gói ưu đãi)",    href: "/offers" },
   { id: "booking",         num: "12", label: "Booking (Đặt phòng)",              href: "/booking" },
-  { id: "contact",         num: "13", label: "Contact (Liên hệ & Chỉ đường)",    href: "/contact" },
+  { id: "booking-success", num: "13", label: "Booking Success (Đặt phòng thành công)", href: "/booking?status=success" },
+  { id: "contact",         num: "14", label: "Contact (Liên hệ & Chỉ đường)",    href: "/contact" },
 ];
 
 type Device = { label: string; icon: React.ReactNode; width: string; height: string };

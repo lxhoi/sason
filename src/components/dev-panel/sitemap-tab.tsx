@@ -4,7 +4,7 @@ import { useState } from "react";
 import {
   Compass, BedDouble, Utensils, Sparkles, Phone, Calendar,
   ArrowUpRight, Star, Zap, Network, LayoutGrid, CheckCircle2,
-  ChevronRight, ArrowRight, Layers, Eye
+  ChevronRight, ArrowRight, Award, ShieldCheck, Check
 } from "lucide-react";
 
 interface Props {
@@ -23,6 +23,7 @@ interface SitemapNode {
   isKeyFlow?: boolean;
   keyFlowStep?: number;
   keyFlowLabel?: string;
+  isGoalNode?: boolean;
   children?: SitemapNode[];
 }
 
@@ -38,7 +39,8 @@ interface SitemapBranch {
   nodes: SitemapNode[];
 }
 
-// Complete ordered SASÓN Resort Sitemap
+// Complete ordered SASÓN Resort Sitemap with complete 5-step User Flow
+// From Home Page -> Room Catalog -> Room Detail -> Booking Form -> Booking Success!
 const sitemapBranches: SitemapBranch[] = [
   {
     branchId: "stay",
@@ -76,7 +78,7 @@ const sitemapBranches: SitemapBranch[] = [
           },
           {
             order: "3.2",
-            name: "Forest Suite",
+            name: "Forest Suite (Chi tiết phòng)",
             en: "Lagoon View · 185m²",
             href: "/rooms/forest-suite",
             icon: BedDouble,
@@ -112,10 +114,10 @@ const sitemapBranches: SitemapBranch[] = [
   {
     branchId: "booking",
     branchOrder: "NHÁNH 02",
-    title: "Đặt Phòng & Chuyển Đổi (Conversion & Concierge)",
-    role: "Mục tiêu chuyển đổi doanh thu chính: Đặt phòng trực tuyến & Dịch vụ hỗ trợ",
+    title: "Đặt Phòng & Chuyển Đổi (Conversion Funnel)",
+    role: "Mục tiêu tối thượng: Điền thông tin đặt phòng & Nhận xác nhận thành công",
     isKeyBranch: true,
-    colorBorder: "border-[#FFD99C]/50",
+    colorBorder: "border-[#FFD99C]/60",
     colorBg: "bg-[#FFD99C]/10",
     colorText: "text-[#FFD99C]",
     nodes: [
@@ -128,16 +130,27 @@ const sitemapBranches: SitemapBranch[] = [
       },
       {
         order: "06",
-        name: "Booking (Đặt phòng trực tuyến)",
-        en: "Direct Booking Engine",
+        name: "Booking (Form đặt phòng trực tuyến)",
+        en: "Direct Booking Form",
         href: "/booking",
         icon: Calendar,
         isKeyFlow: true,
         keyFlowStep: 4,
-        keyFlowLabel: "BƯỚC 4: HOÀN TẤT ĐẶT PHÒNG",
+        keyFlowLabel: "BƯỚC 4: ĐIỀN THÔNG TIN ĐẶT PHÒNG",
       },
       {
         order: "07",
+        name: "Booking Success (Đặt phòng thành công)",
+        en: "Booking Confirmed & Reference Code",
+        href: "/booking?status=success",
+        icon: CheckCircle2,
+        isKeyFlow: true,
+        keyFlowStep: 5,
+        keyFlowLabel: "BƯỚC 5: ĐẶT PHÒNG THÀNH CÔNG (GOAL)",
+        isGoalNode: true,
+      },
+      {
+        order: "08",
         name: "Contact (Liên hệ & Chỉ đường)",
         en: "Contact & Concierge",
         href: "/contact",
@@ -156,14 +169,14 @@ const sitemapBranches: SitemapBranch[] = [
     colorText: "text-[#95B380]",
     nodes: [
       {
-        order: "08",
+        order: "09",
         name: "Dining (Ẩm thực & Bar)",
         en: "Dining Experience",
         href: "/dining",
         icon: Utensils,
       },
       {
-        order: "09",
+        order: "10",
         name: "Wellness & Spa (Trị liệu & Yoga)",
         en: "Wellness & Spa",
         href: "/wellness",
@@ -189,14 +202,14 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
               Sitemap Architecture
             </span>
             <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-mono text-[#C0DBAC]">
-              13 Screens · Ordered
+              14 Screens · 5-Step Key Flow
             </span>
           </div>
           <h1 className="mt-2.5 font-serif text-2xl font-bold tracking-tight text-white md:text-3xl">
-            Sơ Đồ Phân Nhánh Sitemap & Key Flow
+            Sơ Đồ Phân Nhánh Sitemap & Key User Flow
           </h1>
           <p className="mt-1 text-xs text-[#FFFAF2]/60">
-            Cấu trúc toàn bộ website SASÓN Resort theo thứ tự đánh số đơn giản. Tuyến trải nghiệm cốt lõi <strong className="text-[#FFD99C] font-semibold">Key Flow</strong> được viền vàng nổi bật và đánh dấu thứ tự 4 bước chuyển đổi.
+            Tuyến trải nghiệm người dùng chính (<strong className="text-[#FFD99C] font-semibold">Primary Key Flow</strong>) được thiết kế xuyên suốt 5 bước: Từ lúc khách tiếp cận <strong className="text-white">Home Page (/)</strong> cho đến khi <strong className="text-[#FFD99C]">Booking thành công (/booking?status=success)</strong>.
           </p>
         </div>
 
@@ -212,7 +225,7 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
             }`}
           >
             <Star className={`h-3.5 w-3.5 ${filterKeyFlowOnly ? "fill-[#FFD99C] text-[#FFD99C]" : ""}`} />
-            <span>{filterKeyFlowOnly ? "Đang lọc: Chỉ Key Flow" : "Lọc: Chỉ Key Flow"}</span>
+            <span>{filterKeyFlowOnly ? "Đang lọc: Chỉ Key Flow (5 Bước)" : "Lọc: Chỉ Key Flow"}</span>
           </button>
 
           {/* Mode Switch: Mind Map vs Grid */}
@@ -239,60 +252,74 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
         </div>
       </div>
 
-      {/* ── KEY FLOW CALLOUT BANNER (DESIGN SYSTEM COLORS) ── */}
-      <div className="mb-10 overflow-hidden rounded-2xl border border-[#FFD99C]/40 bg-gradient-to-r from-[#00381c] via-[#004121] to-[#0a2318] p-5 shadow-xl shadow-black/40 ring-1 ring-[#FFD99C]/20">
+      {/* ── KEY FLOW CALLOUT BANNER: HOME ➔ BOOKING SUCCESS ── */}
+      <div className="mb-10 overflow-hidden rounded-2xl border border-[#FFD99C]/50 bg-gradient-to-r from-[#00381c] via-[#004121] to-[#0a2318] p-5 shadow-2xl shadow-black/50 ring-1 ring-[#FFD99C]/30">
         <div className="flex items-start gap-4">
-          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFD99C]/20 text-[#FFD99C] ring-1 ring-[#FFD99C]/40">
-            <Zap className="h-5 w-5 fill-current" />
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#FFD99C] text-[#004121] ring-2 ring-[#FFD99C]/40 shadow-lg">
+            <Zap className="h-6 w-6 fill-current" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="font-serif text-sm font-bold uppercase tracking-wider text-[#FFD99C]">
-                Tuyến Trải Nghiệm Cốt Lõi (Primary Key Flow)
+              <h2 className="font-serif text-sm sm:text-base font-bold uppercase tracking-wider text-[#FFD99C]">
+                Tuyến Trải Nghiệm Chính (Home Page ➔ Booking Thành Công)
               </h2>
-              <span className="rounded-full bg-[#FFD99C]/20 px-2 py-0.5 text-[10px] font-bold text-[#FFD99C]">
-                Direct Conversion Funnel
+              <span className="rounded-full bg-[#FFD99C] px-2.5 py-0.5 text-[10px] font-black uppercase text-[#004121]">
+                Full Conversion Journey · 5 Bước
               </span>
             </div>
-            <p className="mt-1 text-xs text-[#FFFAF2]/75 leading-relaxed">
-              Chuỗi 4 bước định hướng khách hàng từ lúc tiếp cận trang chủ đến khi quyết định đặt phòng trực tiếp:
+            <p className="mt-1 text-xs text-[#FFFAF2]/80 leading-relaxed">
+              Trực quan hóa hành trình chuyển đổi cốt lõi từ điểm chạm đầu tiên tới màn hình xác nhận đặt phòng:
             </p>
 
             {/* Stepper Visual in Design System Colors */}
-            <div className="mt-3.5 flex flex-wrap items-center gap-2 font-sans text-xs">
+            <div className="mt-4 flex flex-wrap items-center gap-2 font-sans text-xs">
+              {/* Step 1: Home */}
               <button
                 onClick={() => onNavigate?.("/")}
-                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-3 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-2.5 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
               >
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FFD99C] text-[10px] font-bold text-[#004121]">1</span>
-                <strong>01. Trang Chủ (/)</strong>
+                <strong>01. Home Page (/)</strong>
               </button>
-              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60" />
+              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60 shrink-0" />
 
+              {/* Step 2: Rooms */}
               <button
                 onClick={() => onNavigate?.("/rooms")}
-                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-3 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-2.5 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
               >
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FFD99C] text-[10px] font-bold text-[#004121]">2</span>
-                <strong>03. Suites & Villas (/rooms)</strong>
+                <strong>03. Danh Sách Phòng (/rooms)</strong>
               </button>
-              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60" />
+              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60 shrink-0" />
 
+              {/* Step 3: Room Detail */}
               <button
                 onClick={() => onNavigate?.("/rooms/forest-suite")}
-                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-3 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-2.5 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
               >
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FFD99C] text-[10px] font-bold text-[#004121]">3</span>
-                <strong>3.2. Forest Suite (Chi tiết)</strong>
+                <strong>3.2. Chi Tiết Forest Suite</strong>
               </button>
-              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60" />
+              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60 shrink-0" />
 
+              {/* Step 4: Booking Form */}
               <button
                 onClick={() => onNavigate?.("/booking")}
-                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C] bg-[#FFD99C] text-[#004121] font-bold px-3 py-1 shadow-lg shadow-[#FFD99C]/20 hover:bg-amber-300 transition-all"
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-2.5 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
               >
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#004121] text-[10px] font-black text-[#FFD99C]">4</span>
-                <strong>06. Booking Engine (/booking)</strong>
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FFD99C] text-[10px] font-bold text-[#004121]">4</span>
+                <strong>06. Form Đặt Phòng (/booking)</strong>
+              </button>
+              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60 shrink-0" />
+
+              {/* Step 5: Booking Success (Goal) */}
+              <button
+                onClick={() => onNavigate?.("/booking?status=success")}
+                className="flex items-center gap-1.5 rounded-lg border-2 border-[#FFD99C] bg-[#FFD99C] text-[#004121] font-bold px-3 py-1 shadow-lg shadow-[#FFD99C]/30 hover:bg-amber-300 transition-all"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#004121] text-[10px] font-black text-[#FFD99C]">✓</span>
+                <strong>07. ĐẶT PHÒNG THÀNH CÔNG (GOAL)</strong>
               </button>
             </div>
           </div>
@@ -320,12 +347,12 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
                 <div className="text-left">
                   <div className="flex items-center gap-2">
                     <span className="rounded bg-[#FFD99C] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-[#004121]">
-                      ★ KEY FLOW BƯỚC 1
+                      ★ KEY FLOW BƯỚC 1: BẮT ĐẦU
                     </span>
                     <span className="font-mono text-[10px] text-[#C0DBAC]">/</span>
                   </div>
                   <h3 className="font-serif text-base font-bold text-white">
-                    01. Trang Chủ (Home)
+                    01. Home Page (Trang Chủ)
                   </h3>
                 </div>
                 <ArrowUpRight className="h-4 w-4 text-[#FFD99C] opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all ml-2" />
@@ -381,7 +408,9 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
                                 <button
                                   onClick={() => onNavigate?.(node.href)}
                                   className={`group relative flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-left transition-all ${
-                                    node.isKeyFlow
+                                    node.isGoalNode
+                                      ? "border-2 border-[#FFD99C] bg-gradient-to-r from-[#FFD99C]/25 via-[#004121] to-[#0a2318] hover:border-amber-300 shadow-lg shadow-[#FFD99C]/20 ring-2 ring-[#FFD99C]/40"
+                                      : node.isKeyFlow
                                       ? "border-[#FFD99C] bg-gradient-to-r from-[#004121] to-[#0f3220] hover:border-amber-300 shadow-md shadow-[#FFD99C]/10 ring-1 ring-[#FFD99C]/30"
                                       : isNodeActive
                                       ? "border-[#C0DBAC] bg-[#004121]/50 text-white"
@@ -390,17 +419,27 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
                                 >
                                   <div className="flex items-center gap-3 min-w-0">
                                     <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-mono text-xs font-bold ${
-                                      node.isKeyFlow ? "bg-[#FFD99C] text-[#004121]" : "bg-white/10 text-[#C0DBAC]"
+                                      node.isGoalNode
+                                        ? "bg-[#FFD99C] text-[#004121] font-black"
+                                        : node.isKeyFlow
+                                        ? "bg-[#FFD99C] text-[#004121]"
+                                        : "bg-white/10 text-[#C0DBAC]"
                                     }`}>
-                                      {node.order}
+                                      {node.isGoalNode ? "✓" : node.order}
                                     </span>
                                     <div className="min-w-0">
                                       <div className="flex items-center gap-2 flex-wrap">
-                                        <h4 className="font-medium text-white group-hover:text-[#FFD99C] transition-colors text-xs sm:text-sm">
+                                        <h4 className={`font-medium transition-colors text-xs sm:text-sm ${
+                                          node.isGoalNode ? "text-[#FFD99C] font-bold" : "text-white group-hover:text-[#FFD99C]"
+                                        }`}>
                                           {node.name}
                                         </h4>
                                         {node.isKeyFlow && node.keyFlowLabel && (
-                                          <span className="rounded bg-[#FFD99C] px-1.5 py-0.2 text-[8px] font-black uppercase tracking-wider text-[#004121]">
+                                          <span className={`rounded px-1.5 py-0.2 text-[8px] font-black uppercase tracking-wider ${
+                                            node.isGoalNode
+                                              ? "bg-[#FFD99C] text-[#004121] shadow-sm"
+                                              : "bg-[#FFD99C] text-[#004121]"
+                                          }`}>
                                             ★ {node.keyFlowLabel}
                                           </span>
                                         )}
@@ -408,7 +447,9 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
                                       <p className="font-mono text-[10px] text-white/40">{node.href}</p>
                                     </div>
                                   </div>
-                                  <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-white/30 group-hover:text-[#FFD99C] transition-colors ml-2" />
+                                  <ArrowUpRight className={`h-3.5 w-3.5 shrink-0 transition-colors ml-2 ${
+                                    node.isGoalNode ? "text-[#FFD99C]" : "text-white/30 group-hover:text-[#FFD99C]"
+                                  }`} />
                                 </button>
 
                                 {/* Sub-children (Ordered 3.1 to 3.4 for Suite Detail Pages) */}
@@ -489,7 +530,7 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
                   <span className="text-[11px] text-white/40">{branch.nodes.length} màn hình</span>
                 </div>
 
-                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
                   {branch.nodes
                     .filter((n) => !filterKeyFlowOnly || n.isKeyFlow || n.children?.some((c) => c.isKeyFlow))
                     .map((n) => (
@@ -497,14 +538,18 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
                         key={n.order}
                         onClick={() => onNavigate?.(n.href)}
                         className={`flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
-                          n.isKeyFlow
+                          n.isGoalNode
+                            ? "border-2 border-[#FFD99C] bg-[#FFD99C]/20 text-white shadow-lg ring-1 ring-[#FFD99C]/40"
+                            : n.isKeyFlow
                             ? "border-[#FFD99C] bg-[#004121] text-white shadow-md shadow-[#FFD99C]/10"
                             : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
                         }`}
                       >
                         <div className="flex items-center gap-2.5 min-w-0">
-                          <span className={`font-mono text-xs font-bold ${n.isKeyFlow ? "text-[#FFD99C]" : "text-[#C0DBAC]"}`}>
-                            {n.order}
+                          <span className={`font-mono text-xs font-bold ${
+                            n.isGoalNode ? "text-[#FFD99C] font-black" : n.isKeyFlow ? "text-[#FFD99C]" : "text-[#C0DBAC]"
+                          }`}>
+                            {n.isGoalNode ? "✓" : n.order}
                           </span>
                           <div className="min-w-0">
                             <span className="font-medium text-white text-xs block truncate">{n.name}</span>

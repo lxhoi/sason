@@ -27,7 +27,9 @@ export function BookingForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [notes, setNotes] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [submitted, setSubmitted] = useState(
+    () => params.get("status") === "success"
+  );
   const [datesOpen, setDatesOpen] = useState(false);
 
   const room = rooms.find((item) => item.slug === roomSlug) ?? rooms[1];
@@ -45,14 +47,52 @@ export function BookingForm() {
 
   if (submitted) {
     return (
-      <div className="border border-forest/10 bg-sage/20 px-8 py-16 text-center">
-        <BrandMark className="mx-auto h-16 w-16" />
-        <h2 className="mt-6 font-serif text-4xl italic">Request received</h2>
-        <p className="mx-auto mt-4 max-w-md leading-8 text-forest/75">
-          Thank you, {name.split(" ")[0] || "guest"}. A host will write to{" "}
-          {email || "you"} to confirm {room.name}
-          {nights ? ` for ${nights} night${nights > 1 ? "s" : ""}` : ""}.
+      <div className="border border-forest/15 bg-sage/25 p-8 md:p-14 text-center rounded-2xl shadow-sm">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-[#004121] text-[#FFD99C] shadow-lg shadow-forest/20">
+          <BrandMark className="h-10 w-10" />
+        </div>
+        <span className="mt-6 inline-block rounded-full bg-[#004121]/10 px-3 py-1 font-mono text-[11px] font-bold uppercase tracking-widest text-[#004121]">
+          Reference: #SSN-88294 · Confirmed
+        </span>
+        <h2 className="mt-3 font-serif text-3xl md:text-5xl italic text-[#004121]">
+          Đặt phòng thành công!
+        </h2>
+        <p className="mx-auto mt-4 max-w-lg leading-relaxed text-forest/80 text-sm md:text-base">
+          Cảm ơn quý khách {name ? name.split(" ")[0] : ""}. Yêu cầu lưu trú của quý khách tại{" "}
+          <strong className="text-[#004121]">{room.name}</strong>
+          {nights ? ` (${nights} đêm)` : ""} đã được ghi nhận. Trợ lý cá nhân của SASÓN sẽ liên hệ qua{" "}
+          <strong className="text-[#004121]">{email || "email"}</strong> trong vòng 2 giờ để xác nhận giờ đón và lịch trình nghỉ dưỡng.
         </p>
+
+        <div className="mx-auto mt-8 max-w-md rounded-xl bg-white/80 p-4 border border-forest/10 text-left text-xs text-forest/80 space-y-2">
+          <div className="flex justify-between border-b border-forest/10 pb-2">
+            <span>Hạng phòng:</span>
+            <strong className="text-forest">{room.name}</strong>
+          </div>
+          <div className="flex justify-between border-b border-forest/10 pb-2">
+            <span>Thời gian lưu trú:</span>
+            <strong className="text-forest">{dateLabel !== "Select dates" ? dateLabel : "3 đêm (Tiêu chuẩn)"}</strong>
+          </div>
+          <div className="flex justify-between">
+            <span>Đặc quyền bao gồm:</span>
+            <span className="text-forest font-semibold">Bữa sáng hàng ngày & Lagoon pool</span>
+          </div>
+        </div>
+
+        <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <a
+            href="/"
+            className="rounded-full bg-[#004121] px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-[#FFFAF2] shadow-md hover:bg-[#002f18] transition-colors"
+          >
+            Về Trang Chủ (Home)
+          </a>
+          <button
+            onClick={() => setSubmitted(false)}
+            className="rounded-full border border-forest/20 bg-white/50 px-6 py-3 font-mono text-xs font-bold uppercase tracking-wider text-forest hover:bg-white transition-colors"
+          >
+            Đặt Phòng Mới
+          </button>
+        </div>
       </div>
     );
   }

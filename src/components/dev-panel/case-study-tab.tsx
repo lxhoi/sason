@@ -521,10 +521,10 @@ export function CaseStudyTab({ onNavigate }: Props) {
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               <span className="rounded-full bg-[#F4EFE6] px-3 py-1 text-xs text-[#004121] font-semibold border border-[#C0DBAC]/50">
-                13 Responsive Screens
+                14 Responsive Screens
               </span>
-              <span className="rounded-full bg-[#004121]/10 px-3 py-1 text-xs text-[#004121] font-semibold">
-                Conversion Optimized
+              <span className="rounded-full bg-[#FFD99C] px-3 py-1 text-xs text-[#004121] font-bold">
+                5-Step Key User Flow
               </span>
             </div>
             <button
@@ -539,7 +539,7 @@ export function CaseStudyTab({ onNavigate }: Props) {
           <div className="md:col-span-7 flex items-center justify-center rounded-2xl bg-[#F4EFE6] p-5 border border-[#C0DBAC]/40">
             <div className="w-full space-y-2.5 font-mono text-xs">
               <div className="rounded-lg bg-[#004121] text-[#FFD99C] p-2.5 font-bold text-center shadow-md">
-                SASÓN Home (/)
+                ★ Bước 1: Home Page (/)
               </div>
               <div className="grid grid-cols-4 gap-2 text-center text-[10px]">
                 <div className="rounded border border-slate-300 bg-white p-2">
@@ -547,20 +547,20 @@ export function CaseStudyTab({ onNavigate }: Props) {
                   <span className="block text-slate-400">/the-resort</span>
                 </div>
                 <div className="rounded border-2 border-[#004121] bg-[#004121]/10 p-2 font-bold text-[#004121]">
-                  <strong>Suites & Villas</strong>
+                  <strong>★ Bước 2: Rooms</strong>
                   <span className="block text-[#004121]/70">/rooms</span>
                 </div>
                 <div className="rounded border border-slate-300 bg-white p-2">
                   <strong className="text-slate-800">Experiences</strong>
                   <span className="block text-slate-400">/dining, /spa</span>
                 </div>
-                <div className="rounded border-2 border-[#A66B37] bg-[#FFF7ED] p-2 font-bold text-[#A66B37]">
-                  <strong>Booking</strong>
-                  <span className="block text-[#A66B37]">/booking</span>
+                <div className="rounded border-2 border-[#FFD99C] bg-[#FFD99C]/20 p-2 font-bold text-[#004121]">
+                  <strong>★ Bước 4: Booking</strong>
+                  <span className="block text-[#004121]/70">/booking</span>
                 </div>
               </div>
-              <div className="rounded-lg border border-dashed border-[#004121] p-2 text-center text-[11px] text-[#004121] bg-white">
-                ↳ 4 Villa Slugs: /rooms/[garden-bungalow | forest-suite | ocean-villa | sason-residence]
+              <div className="rounded-lg border-2 border-dashed border-[#FFD99C] p-2 text-center text-[11px] text-[#004121] bg-[#FFD99C]/15 font-bold">
+                ↳ ★ Bước 3: Forest Suite (/rooms/forest-suite) ➔ ★ Bước 5: Booking Success (Goal)
               </div>
             </div>
           </div>
