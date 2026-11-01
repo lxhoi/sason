@@ -2,17 +2,18 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import {
-  Map, Palette, Play,
+  Map, Palette, Play, BookOpen,
   RotateCcw, ExternalLink,
   Monitor, Tablet, Smartphone,
   ChevronLeft, ChevronRight, ChevronDown, Check
 } from "lucide-react";
 import { SitemapTab } from "@/components/dev-panel/sitemap-tab";
 import { DesignSystemTab } from "@/components/dev-panel/design-system-tab";
+import { CaseStudyTab } from "@/components/dev-panel/case-study-tab";
 import { CupertinoSegmentedControl, type SegmentedControlOption } from "@/components/cupertino/segmented-control";
 import { AILoadingState } from "@/components/cupertino/ai-loading-state";
 
-type View = "prototype" | "design" | "sitemap";
+type View = "prototype" | "design" | "sitemap" | "casestudy";
 
 const PROTOTYPE_SCREENS = [
   { id: "home",            num: "1",  label: "Trang chủ (Home)",                 href: "/" },
@@ -229,6 +230,7 @@ export default function DevPage() {
               { value: "prototype", label: "Interactive Prototype", icon: <Play className="h-3 w-3 fill-current" /> },
               { value: "design",    label: "Design System",         icon: <Palette className="h-3.5 w-3.5" /> },
               { value: "sitemap",   label: "Sitemap",               icon: <Map className="h-3.5 w-3.5" /> },
+              { value: "casestudy", label: "Case Study",            icon: <BookOpen className="h-3.5 w-3.5" /> },
             ]}
             value={view}
             onChange={(val) => setView(val as View)}
@@ -329,6 +331,13 @@ export default function DevPage() {
         {view === "sitemap" && (
           <div data-lenis-prevent className="h-full w-full min-h-0 overflow-y-auto overscroll-contain bg-[#0d1017] pb-24">
             <SitemapTab onNavigate={navigatePrototype} currentUrl={currentPath} />
+          </div>
+        )}
+
+        {/* 4. Case Study Canvas */}
+        {view === "casestudy" && (
+          <div data-lenis-prevent className="h-full w-full min-h-0 overflow-y-auto overscroll-contain bg-[#0a0f1d] pb-24">
+            <CaseStudyTab onNavigate={navigatePrototype} />
           </div>
         )}
       </div>
