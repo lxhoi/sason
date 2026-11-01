@@ -1,11 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { rooms, offers } from "@/lib/data";
 import {
   Compass, BedDouble, Utensils, Sparkles, Phone, Calendar,
   ArrowUpRight, Star, Zap, Network, LayoutGrid, CheckCircle2,
-  Info, ExternalLink, ChevronRight
+  ChevronRight, ArrowRight, Layers, Eye
 } from "lucide-react";
 
 interface Props {
@@ -15,169 +14,160 @@ interface Props {
 
 type ViewMode = "mindmap" | "grid";
 
-interface MindNode {
-  id: string;
+interface SitemapNode {
+  order: string;
   name: string;
   en: string;
   href: string;
   icon: any;
-  category: "core" | "rooms" | "experience" | "booking" | "offers";
-  desc: string;
   isKeyFlow?: boolean;
   keyFlowStep?: number;
-  keyFlowNote?: string;
-  children?: MindNode[];
+  keyFlowLabel?: string;
+  children?: SitemapNode[];
 }
 
-const mindMapData: {
-  branchName: string;
-  category: "rooms" | "booking" | "offers" | "experience" | "brand";
-  isKeyFlow?: boolean;
-  flowRole?: string;
-  color: string;
-  accent: string;
-  nodes: MindNode[];
-}[] = [
+interface SitemapBranch {
+  branchId: string;
+  branchOrder: string;
+  title: string;
+  role: string;
+  colorBorder: string;
+  colorBg: string;
+  colorText: string;
+  isKeyBranch?: boolean;
+  nodes: SitemapNode[];
+}
+
+// Complete ordered SASÓN Resort Sitemap
+const sitemapBranches: SitemapBranch[] = [
   {
-    branchName: "1. Đặt Phòng & Chuyển Đổi (Conversion)",
-    category: "booking",
-    isKeyFlow: true,
-    flowRole: "Điểm chốt chuyển đổi doanh thu chính của resort (Primary Goal)",
-    color: "border-orange-500/60 bg-orange-500/10 text-orange-300",
-    accent: "orange",
+    branchId: "stay",
+    branchOrder: "NHÁNH 01",
+    title: "Lưu Trú & Không Gian Nghỉ Dưỡng (Sanctuary & Stay)",
+    role: "Trọng tâm sản phẩm: Tìm hiểu không gian, duyệt danh mục & chọn phòng",
+    isKeyBranch: true,
+    colorBorder: "border-[#C0DBAC]/40",
+    colorBg: "bg-[#004121]/20",
+    colorText: "text-[#C0DBAC]",
     nodes: [
       {
-        id: "booking",
-        name: "Đặt phòng trực tuyến",
-        en: "Online Booking Engine",
-        href: "/booking",
-        icon: Calendar,
-        category: "booking",
-        desc: "Form chọn ngày, số lượng khách, chọn hạng phòng & xác nhận thông tin",
-        isKeyFlow: true,
-        keyFlowStep: 4,
-        keyFlowNote: "Mục tiêu tối thượng (Primary Goal): Khách chọn ngày, hạng phòng và gửi thông tin đặt phòng.",
-      },
-      {
-        id: "contact",
-        name: "Liên hệ & Trợ lý cá nhân",
-        en: "Contact & Concierge",
-        href: "/contact",
-        icon: Phone,
-        category: "booking",
-        desc: "Hỗ trợ khách VIP, sự kiện đặc biệt, xe đưa đón và tiệc cưới",
-        isKeyFlow: false,
-      },
-    ],
-  },
-  {
-    branchName: "2. Lưu Trú & Nghỉ Dưỡng (Suites & Villas)",
-    category: "rooms",
-    isKeyFlow: true,
-    flowRole: "Trọng tâm sản phẩm: So sánh & ra quyết định chọn phòng",
-    color: "border-emerald-500/60 bg-emerald-500/10 text-emerald-300",
-    accent: "emerald",
-    nodes: [
-      {
-        id: "rooms",
-        name: "Tất cả Suites & Villas",
-        en: "All Rooms Catalog",
-        href: "/rooms",
-        icon: BedDouble,
-        category: "rooms",
-        desc: "Danh mục 4 hạng phòng cao cấp từ bungalow đến dinh thự riêng",
-        isKeyFlow: true,
-        keyFlowStep: 2,
-        keyFlowNote: "Bước khám phá: Khách duyệt tổng quan các hạng phòng, so sánh diện tích, hướng view và giá.",
-        children: rooms.map((r, idx) => ({
-          id: r.slug,
-          name: r.name,
-          en: `${r.size} · ${r.beds}`,
-          href: `/rooms/${r.slug}`,
-          icon: BedDouble,
-          category: "rooms" as const,
-          desc: r.summary,
-          isKeyFlow: idx === 1, // Highlight Forest Suite as featured key flow example
-          keyFlowStep: idx === 1 ? 3 : undefined,
-          keyFlowNote: idx === 1 ? "Bước cân nhắc chi tiết: Xem chi tiết tiện nghi phòng, hồ bơi riêng và CTA 'Book now'." : undefined,
-        })),
-      },
-    ],
-  },
-  {
-    branchName: "3. Gói Ưu Đãi (Exclusive Offers)",
-    category: "offers",
-    isKeyFlow: true,
-    flowRole: "Kích hoạt tâm lý đặt phòng qua gói quà tặng & giảm giá",
-    color: "border-amber-500/60 bg-amber-500/10 text-amber-300",
-    accent: "amber",
-    nodes: [
-      {
-        id: "offers",
-        name: "Ưu Đãi Độc Quyền",
-        en: "Seasonal Packages",
-        href: "/offers",
-        icon: Sparkles,
-        category: "offers",
-        desc: "Gói 'First Light', 'Monsoon Still' và 'The Gathering' tặng kèm spa & bữa tối",
-        isKeyFlow: true,
-        keyFlowNote: "Luồng kích cầu phụ: Khách bị thu hút bởi khuyến mãi sẽ bấm nút đặt phòng kèm quà tặng.",
-      },
-    ],
-  },
-  {
-    branchName: "4. Thương Hiệu & Không Gian (Brand & Sanctuary)",
-    category: "brand",
-    isKeyFlow: false,
-    flowRole: "Xây dựng niềm tin, truyền tải triết lý kiến trúc & phong cách sống",
-    color: "border-blue-500/60 bg-blue-500/10 text-blue-300",
-    accent: "blue",
-    nodes: [
-      {
-        id: "the-resort",
-        name: "Về SASÓN Resort",
+        order: "02",
+        name: "The Resort (Giới thiệu)",
         en: "The Sanctuary Story",
         href: "/the-resort",
         icon: Compass,
-        category: "core",
-        desc: "Triết lý tĩnh lặng giữa rừng nguyên sinh và bãi biển riêng Bãi Dài",
       },
       {
-        id: "gallery",
-        name: "Thư viện hình ảnh",
+        order: "03",
+        name: "Suites & Villas (Danh mục phòng)",
+        en: "All Suites & Villas",
+        href: "/rooms",
+        icon: BedDouble,
+        isKeyFlow: true,
+        keyFlowStep: 2,
+        keyFlowLabel: "BƯỚC 2: DUYỆT PHÒNG",
+        children: [
+          {
+            order: "3.1",
+            name: "Garden Bungalow",
+            en: "Garden Villa · 140m²",
+            href: "/rooms/garden-bungalow",
+            icon: BedDouble,
+          },
+          {
+            order: "3.2",
+            name: "Forest Suite",
+            en: "Lagoon View · 185m²",
+            href: "/rooms/forest-suite",
+            icon: BedDouble,
+            isKeyFlow: true,
+            keyFlowStep: 3,
+            keyFlowLabel: "BƯỚC 3: CHI TIẾT PHÒNG",
+          },
+          {
+            order: "3.3",
+            name: "Ocean Villa",
+            en: "Beachfront · 240m²",
+            href: "/rooms/ocean-villa",
+            icon: BedDouble,
+          },
+          {
+            order: "3.4",
+            name: "SASÓN Residence",
+            en: "Private Compound · 420m²",
+            href: "/rooms/sason-residence",
+            icon: BedDouble,
+          },
+        ],
+      },
+      {
+        order: "04",
+        name: "Gallery (Thư viện hình ảnh)",
         en: "Visual Gallery",
         href: "/gallery",
         icon: Sparkles,
-        category: "core",
-        desc: "Không gian kiến trúc mở, hồ bơi vô cực và ánh hoàng hôn đảo ngọc",
       },
     ],
   },
   {
-    branchName: "5. Trải Nghiệm Ẩm Thực & Trị Liệu (Experiences)",
-    category: "experience",
-    isKeyFlow: false,
-    flowRole: "Gia tăng giá trị cảm xúc và thời gian lưu trú",
-    color: "border-purple-500/60 bg-purple-500/10 text-purple-300",
-    accent: "purple",
+    branchId: "booking",
+    branchOrder: "NHÁNH 02",
+    title: "Đặt Phòng & Chuyển Đổi (Conversion & Concierge)",
+    role: "Mục tiêu chuyển đổi doanh thu chính: Đặt phòng trực tuyến & Dịch vụ hỗ trợ",
+    isKeyBranch: true,
+    colorBorder: "border-[#FFD99C]/50",
+    colorBg: "bg-[#FFD99C]/10",
+    colorText: "text-[#FFD99C]",
     nodes: [
       {
-        id: "dining",
-        name: "Ẩm Thực & Bar",
+        order: "05",
+        name: "Exclusive Offers (Gói ưu đãi)",
+        en: "Seasonal Packages",
+        href: "/offers",
+        icon: Sparkles,
+      },
+      {
+        order: "06",
+        name: "Booking (Đặt phòng trực tuyến)",
+        en: "Direct Booking Engine",
+        href: "/booking",
+        icon: Calendar,
+        isKeyFlow: true,
+        keyFlowStep: 4,
+        keyFlowLabel: "BƯỚC 4: HOÀN TẤT ĐẶT PHÒNG",
+      },
+      {
+        order: "07",
+        name: "Contact (Liên hệ & Chỉ đường)",
+        en: "Contact & Concierge",
+        href: "/contact",
+        icon: Phone,
+      },
+    ],
+  },
+  {
+    branchId: "experience",
+    branchOrder: "NHÁNH 03",
+    title: "Trải Nghiệm Ẩm Thực & Trị Liệu (Experiences)",
+    role: "Gia tăng giá trị cảm xúc, ẩm thực cao cấp và sức khỏe",
+    isKeyBranch: false,
+    colorBorder: "border-[#95B380]/40",
+    colorBg: "bg-[#95B380]/10",
+    colorText: "text-[#95B380]",
+    nodes: [
+      {
+        order: "08",
+        name: "Dining (Ẩm thực & Bar)",
         en: "Dining Experience",
         href: "/dining",
         icon: Utensils,
-        category: "experience",
-        desc: "Hải sản tươi ngon bản địa, cocktail hoàng hôn và nhà hàng mặt nước",
       },
       {
-        id: "wellness",
-        name: "Spa & Trị Liệu",
+        order: "09",
+        name: "Wellness & Spa (Trị liệu & Yoga)",
         en: "Wellness & Spa",
         href: "/wellness",
         icon: Sparkles,
-        category: "experience",
-        desc: "Liệu trình thảo mộc Phú Quốc, phòng xông hơi và yoga bình minh",
       },
     ],
   },
@@ -190,268 +180,290 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
   return (
     <div className="mx-auto max-w-7xl px-4 py-8 text-white md:px-8">
 
-      {/* ── TOP HEADER ── */}
-      <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+      {/* ── HEADER (SASÓN DESIGN SYSTEM PALETTE) ── */}
+      <div className="mb-8 flex flex-wrap items-center justify-between gap-4 border-b border-[#C0DBAC]/20 pb-6">
         <div>
           <div className="flex items-center gap-2">
-            <span className="flex items-center gap-1 rounded bg-orange-500/20 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-orange-400">
-              <Zap className="h-3 w-3" />
-              Sitemap Mind Map
+            <span className="flex items-center gap-1.5 rounded-full border border-[#FFD99C]/40 bg-[#004121] px-3 py-0.5 text-[11px] font-serif tracking-wider text-[#FFD99C] shadow-sm">
+              <Zap className="h-3 w-3 fill-current text-[#FFD99C]" />
+              Sitemap Architecture
             </span>
-            <span className="rounded bg-white/10 px-2 py-0.5 text-[10px] font-medium text-white/50">
-              13 Màn hình
+            <span className="rounded-full bg-white/10 px-2.5 py-0.5 text-[10px] font-mono text-[#C0DBAC]">
+              13 Screens · Ordered
             </span>
           </div>
-          <h1 className="mt-2 text-2xl font-bold tracking-tight text-white md:text-3xl">
+          <h1 className="mt-2.5 font-serif text-2xl font-bold tracking-tight text-white md:text-3xl">
             Sơ Đồ Phân Nhánh Sitemap & Key Flow
           </h1>
-          <p className="mt-1 text-xs text-white/50">
-            Trực quan hóa cấu trúc website dưới dạng Mind Map phân nhánh. Các bước trong <strong className="text-orange-400">Key Flow</strong> được viền sáng và đánh số thứ tự trải nghiệm.
+          <p className="mt-1 text-xs text-[#FFFAF2]/60">
+            Cấu trúc toàn bộ website SASÓN Resort theo thứ tự đánh số đơn giản. Tuyến trải nghiệm cốt lõi <strong className="text-[#FFD99C] font-semibold">Key Flow</strong> được viền vàng nổi bật và đánh dấu thứ tự 4 bước chuyển đổi.
           </p>
         </div>
 
-        {/* View Toggle & Filter */}
+        {/* View Switcher & Filter Controls */}
         <div className="flex flex-wrap items-center gap-2">
-          {/* Key flow filter toggle */}
+          {/* Filter Key Flow Toggle */}
           <button
             onClick={() => setFilterKeyFlowOnly((v) => !v)}
-            className={`flex items-center gap-1.5 rounded-lg border px-3 py-1.5 text-xs font-medium transition-all ${
+            className={`flex items-center gap-1.5 rounded-lg border px-3.5 py-1.5 text-xs font-medium transition-all ${
               filterKeyFlowOnly
-                ? "border-orange-500 bg-orange-500/20 text-orange-300 shadow-md shadow-orange-500/10"
-                : "border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
+                ? "border-[#FFD99C] bg-[#FFD99C]/20 text-[#FFD99C] shadow-md shadow-[#FFD99C]/10 ring-1 ring-[#FFD99C]/30"
+                : "border-white/15 bg-white/5 text-white/70 hover:border-white/30 hover:text-white"
             }`}
           >
-            <Star className={`h-3.5 w-3.5 ${filterKeyFlowOnly ? "fill-orange-400 text-orange-400" : ""}`} />
+            <Star className={`h-3.5 w-3.5 ${filterKeyFlowOnly ? "fill-[#FFD99C] text-[#FFD99C]" : ""}`} />
             <span>{filterKeyFlowOnly ? "Đang lọc: Chỉ Key Flow" : "Lọc: Chỉ Key Flow"}</span>
           </button>
 
-          {/* Mode switch */}
-          <div className="flex items-center rounded-lg border border-white/10 bg-white/5 p-0.5">
+          {/* Mode Switch: Mind Map vs Grid */}
+          <div className="flex items-center rounded-lg border border-white/15 bg-white/5 p-0.5">
             <button
               onClick={() => setViewMode("mindmap")}
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                viewMode === "mindmap" ? "bg-white/15 text-white shadow-sm" : "text-white/40 hover:text-white/80"
+                viewMode === "mindmap" ? "bg-[#004121] text-[#FFD99C] shadow-sm font-semibold" : "text-white/50 hover:text-white"
               }`}
             >
               <Network className="h-3.5 w-3.5" />
-              <span>Mind Map</span>
+              <span>Dạng Mind Map</span>
             </button>
             <button
               onClick={() => setViewMode("grid")}
               className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
-                viewMode === "grid" ? "bg-white/15 text-white shadow-sm" : "text-white/40 hover:text-white/80"
+                viewMode === "grid" ? "bg-[#004121] text-[#FFD99C] shadow-sm font-semibold" : "text-white/50 hover:text-white"
               }`}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
-              <span>Dạng Thẻ</span>
+              <span>Dạng Lưới Thẻ</span>
             </button>
           </div>
         </div>
       </div>
 
-      {/* ── KEY FLOW ANNOTATION / CHÚ THÍCH BANNER ── */}
-      <div className="mb-10 overflow-hidden rounded-2xl border border-orange-500/40 bg-gradient-to-r from-orange-950/40 via-amber-950/20 to-black/30 p-5 shadow-xl shadow-orange-950/20 ring-1 ring-orange-500/20">
-        <div className="flex items-start gap-3.5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-orange-500/20 text-orange-400 ring-1 ring-orange-500/30">
-            <Zap className="h-5 w-5" />
+      {/* ── KEY FLOW CALLOUT BANNER (DESIGN SYSTEM COLORS) ── */}
+      <div className="mb-10 overflow-hidden rounded-2xl border border-[#FFD99C]/40 bg-gradient-to-r from-[#00381c] via-[#004121] to-[#0a2318] p-5 shadow-xl shadow-black/40 ring-1 ring-[#FFD99C]/20">
+        <div className="flex items-start gap-4">
+          <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-[#FFD99C]/20 text-[#FFD99C] ring-1 ring-[#FFD99C]/40">
+            <Zap className="h-5 w-5 fill-current" />
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex flex-wrap items-center gap-2">
-              <h2 className="text-sm font-bold uppercase tracking-wider text-orange-300">
-                Chú Thích Tuyến Trải Nghiệm Cốt Lõi (Primary Key Flow)
+              <h2 className="font-serif text-sm font-bold uppercase tracking-wider text-[#FFD99C]">
+                Tuyến Trải Nghiệm Cốt Lõi (Primary Key Flow)
               </h2>
-              <span className="rounded-full bg-orange-500/20 px-2 py-0.5 text-[10px] font-semibold text-orange-300">
-                Conversion Funnel
+              <span className="rounded-full bg-[#FFD99C]/20 px-2 py-0.5 text-[10px] font-bold text-[#FFD99C]">
+                Direct Conversion Funnel
               </span>
             </div>
-            <p className="mt-1 text-xs text-white/70 leading-relaxed">
-              Tuyến đường có tỷ lệ chuyển đổi cao nhất, biến người truy cập lần đầu thành khách đặt phòng thành công:
+            <p className="mt-1 text-xs text-[#FFFAF2]/75 leading-relaxed">
+              Chuỗi 4 bước định hướng khách hàng từ lúc tiếp cận trang chủ đến khi quyết định đặt phòng trực tiếp:
             </p>
 
-            {/* Stepper Visual */}
-            <div className="mt-4 flex flex-wrap items-center gap-2 font-sans text-xs">
-              <div className="flex items-center gap-1.5 rounded-lg border border-orange-500/40 bg-orange-500/10 px-2.5 py-1 text-orange-200">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">1</span>
-                <strong>Trang Chủ (/)</strong>
-              </div>
-              <ChevronRight className="h-3.5 w-3.5 text-orange-400/60" />
+            {/* Stepper Visual in Design System Colors */}
+            <div className="mt-3.5 flex flex-wrap items-center gap-2 font-sans text-xs">
+              <button
+                onClick={() => onNavigate?.("/")}
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-3 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FFD99C] text-[10px] font-bold text-[#004121]">1</span>
+                <strong>01. Trang Chủ (/)</strong>
+              </button>
+              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60" />
 
-              <div className="flex items-center gap-1.5 rounded-lg border border-orange-500/40 bg-orange-500/10 px-2.5 py-1 text-orange-200">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">2</span>
-                <strong>Suites & Villas (/rooms)</strong>
-              </div>
-              <ChevronRight className="h-3.5 w-3.5 text-orange-400/60" />
+              <button
+                onClick={() => onNavigate?.("/rooms")}
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-3 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FFD99C] text-[10px] font-bold text-[#004121]">2</span>
+                <strong>03. Suites & Villas (/rooms)</strong>
+              </button>
+              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60" />
 
-              <div className="flex items-center gap-1.5 rounded-lg border border-orange-500/40 bg-orange-500/10 px-2.5 py-1 text-orange-200">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-orange-500 text-[10px] font-bold text-white">3</span>
-                <strong>Chi Tiết Phòng (/rooms/[slug])</strong>
-              </div>
-              <ChevronRight className="h-3.5 w-3.5 text-orange-400/60" />
+              <button
+                onClick={() => onNavigate?.("/rooms/forest-suite")}
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C]/40 bg-[#002f18] px-3 py-1 text-[#FFD99C] hover:bg-[#002513] transition-all"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#FFD99C] text-[10px] font-bold text-[#004121]">3</span>
+                <strong>3.2. Forest Suite (Chi tiết)</strong>
+              </button>
+              <ChevronRight className="h-3.5 w-3.5 text-[#FFD99C]/60" />
 
-              <div className="flex items-center gap-1.5 rounded-lg border border-orange-500 bg-orange-500 text-white font-bold px-2.5 py-1 shadow-md shadow-orange-500/30">
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-white text-[10px] font-black text-orange-600">4</span>
-                <strong>Đặt Phòng Trực Tuyến (/booking)</strong>
-              </div>
-            </div>
-
-            {/* Annotation tags */}
-            <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-white/50">
-              <span>🎯 <strong>Mục tiêu:</strong> Tối đa hóa tỷ lệ đặt phòng trực tiếp không qua OTA</span>
-              <span>⭐ <strong>Điểm nhấn:</strong> Giữ chân bằng hình ảnh bãi biển, tiện nghi và ưu đãi độc quyền</span>
+              <button
+                onClick={() => onNavigate?.("/booking")}
+                className="flex items-center gap-1.5 rounded-lg border border-[#FFD99C] bg-[#FFD99C] text-[#004121] font-bold px-3 py-1 shadow-lg shadow-[#FFD99C]/20 hover:bg-amber-300 transition-all"
+              >
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-[#004121] text-[10px] font-black text-[#FFD99C]">4</span>
+                <strong>06. Booking Engine (/booking)</strong>
+              </button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* ── VIEW 1: MIND MAP VIEW ── */}
+      {/* ── VIEW 1: MIND MAP VIEW (REORGANIZED & ORDERED) ── */}
       {viewMode === "mindmap" && (
-        <div className="space-y-12">
+        <div className="space-y-10">
 
-          {/* Central Root Node */}
+          {/* Central Root Node (01. Trang Chủ) */}
           <div className="flex flex-col items-center justify-center text-center">
             <div className="relative group">
               <button
                 onClick={() => onNavigate?.("/")}
-                className={`relative flex items-center gap-3 rounded-2xl border-2 px-6 py-3.5 shadow-2xl transition-all hover:scale-105 ${
+                className={`relative flex items-center gap-3.5 rounded-2xl border-2 px-6 py-3.5 shadow-2xl transition-all hover:scale-105 ${
                   currentUrl === "/"
-                    ? "border-orange-500 bg-gradient-to-r from-orange-600/30 to-amber-600/20 text-white ring-4 ring-orange-500/20"
-                    : "border-orange-500/80 bg-gradient-to-br from-[#1b1726] to-[#121622] text-white hover:border-orange-400 shadow-orange-500/10"
+                    ? "border-[#FFD99C] bg-gradient-to-r from-[#004121] to-[#0a2f1c] text-white ring-4 ring-[#FFD99C]/30"
+                    : "border-[#FFD99C]/80 bg-[#00381c] text-white hover:border-[#FFD99C] shadow-[#FFD99C]/10"
                 }`}
               >
-                <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orange-500 text-white font-bold shadow-md shadow-orange-500/30">
-                  <Compass className="h-4 w-4" />
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FFD99C] text-[#004121] font-serif font-bold text-lg shadow-md">
+                  01
                 </div>
                 <div className="text-left">
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-orange-500 px-1.5 py-0.5 text-[9px] font-extrabold uppercase tracking-widest text-white">
+                    <span className="rounded bg-[#FFD99C] px-1.5 py-0.5 text-[9px] font-black uppercase tracking-wider text-[#004121]">
                       ★ KEY FLOW BƯỚC 1
                     </span>
-                    <span className="font-mono text-[10px] text-orange-300">/</span>
+                    <span className="font-mono text-[10px] text-[#C0DBAC]">/</span>
                   </div>
-                  <h3 className="text-sm font-bold text-white">Trang chủ (Home)</h3>
+                  <h3 className="font-serif text-base font-bold text-white">
+                    01. Trang Chủ (Home)
+                  </h3>
                 </div>
-                <ArrowUpRight className="h-4 w-4 text-orange-400 opacity-60 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all" />
+                <ArrowUpRight className="h-4 w-4 text-[#FFD99C] opacity-70 group-hover:opacity-100 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-all ml-2" />
               </button>
 
               {/* Trunk connector line going down */}
-              <div className="mx-auto h-8 w-0.5 bg-gradient-to-b from-orange-500 to-white/20" />
+              <div className="mx-auto h-8 w-0.5 bg-gradient-to-b from-[#FFD99C] to-[#C0DBAC]/40" />
             </div>
           </div>
 
-          {/* Mind Map Branches Grid */}
-          <div className="grid gap-6 lg:grid-cols-2">
-            {mindMapData
-              .filter((branch) => !filterKeyFlowOnly || branch.isKeyFlow)
+          {/* Mind Map Branches */}
+          <div className="grid gap-6 lg:grid-cols-3">
+            {sitemapBranches
+              .filter((branch) => !filterKeyFlowOnly || branch.isKeyBranch)
               .map((branch) => {
                 return (
                   <div
-                    key={branch.branchName}
-                    className={`relative rounded-2xl border p-5 transition-all ${
-                      branch.isKeyFlow
-                        ? "border-orange-500/50 bg-[#16131c] shadow-lg shadow-orange-950/10 ring-1 ring-orange-500/20"
-                        : "border-white/10 bg-[#12151f]/80 hover:border-white/20"
+                    key={branch.branchId}
+                    className={`relative rounded-2xl border p-5 transition-all flex flex-col justify-between ${
+                      branch.isKeyBranch
+                        ? "border-[#FFD99C]/50 bg-[#0b1a13] shadow-xl ring-1 ring-[#FFD99C]/20"
+                        : "border-[#C0DBAC]/20 bg-[#0a1410] hover:border-[#C0DBAC]/40"
                     }`}
                   >
-                    {/* Branch Header */}
-                    <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
-                      <div className="flex items-center gap-2">
-                        <span className={`rounded-md px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${branch.color}`}>
-                          {branch.branchName}
-                        </span>
-                        {branch.isKeyFlow && (
-                          <span className="flex items-center gap-1 rounded bg-orange-500/20 px-2 py-0.5 text-[10px] font-semibold text-orange-300">
+                    <div>
+                      {/* Branch Header */}
+                      <div className="mb-4 flex items-center justify-between border-b border-white/10 pb-3">
+                        <div className="flex items-center gap-2">
+                          <span className={`rounded-md px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider ${branch.colorBg} ${branch.colorText} border ${branch.colorBorder}`}>
+                            {branch.branchOrder}
+                          </span>
+                          <span className="font-serif text-xs font-bold text-white">
+                            {branch.title}
+                          </span>
+                        </div>
+                        {branch.isKeyBranch && (
+                          <span className="flex items-center gap-1 rounded bg-[#FFD99C]/20 px-2 py-0.5 text-[10px] font-bold text-[#FFD99C]">
                             <Star className="h-2.5 w-2.5 fill-current" />
-                            Key Flow Branch
+                            Key Flow
                           </span>
                         )}
                       </div>
+
+                      {/* Nodes inside this branch */}
+                      <div className="space-y-3">
+                        {branch.nodes
+                          .filter((node) => !filterKeyFlowOnly || node.isKeyFlow || node.children?.some((c) => c.isKeyFlow))
+                          .map((node) => {
+                            const isNodeActive = currentUrl === node.href;
+
+                            return (
+                              <div key={node.order} className="space-y-2">
+                                <button
+                                  onClick={() => onNavigate?.(node.href)}
+                                  className={`group relative flex w-full items-center justify-between rounded-xl border px-3.5 py-2.5 text-left transition-all ${
+                                    node.isKeyFlow
+                                      ? "border-[#FFD99C] bg-gradient-to-r from-[#004121] to-[#0f3220] hover:border-amber-300 shadow-md shadow-[#FFD99C]/10 ring-1 ring-[#FFD99C]/30"
+                                      : isNodeActive
+                                      ? "border-[#C0DBAC] bg-[#004121]/50 text-white"
+                                      : "border-white/10 bg-white/5 hover:border-white/25 hover:bg-white/10"
+                                  }`}
+                                >
+                                  <div className="flex items-center gap-3 min-w-0">
+                                    <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md font-mono text-xs font-bold ${
+                                      node.isKeyFlow ? "bg-[#FFD99C] text-[#004121]" : "bg-white/10 text-[#C0DBAC]"
+                                    }`}>
+                                      {node.order}
+                                    </span>
+                                    <div className="min-w-0">
+                                      <div className="flex items-center gap-2 flex-wrap">
+                                        <h4 className="font-medium text-white group-hover:text-[#FFD99C] transition-colors text-xs sm:text-sm">
+                                          {node.name}
+                                        </h4>
+                                        {node.isKeyFlow && node.keyFlowLabel && (
+                                          <span className="rounded bg-[#FFD99C] px-1.5 py-0.2 text-[8px] font-black uppercase tracking-wider text-[#004121]">
+                                            ★ {node.keyFlowLabel}
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="font-mono text-[10px] text-white/40">{node.href}</p>
+                                    </div>
+                                  </div>
+                                  <ArrowUpRight className="h-3.5 w-3.5 shrink-0 text-white/30 group-hover:text-[#FFD99C] transition-colors ml-2" />
+                                </button>
+
+                                {/* Sub-children (Ordered 3.1 to 3.4 for Suite Detail Pages) */}
+                                {node.children && node.children.length > 0 && (
+                                  <div className="ml-4 border-l-2 border-dashed border-[#C0DBAC]/40 pl-3 space-y-1.5 pt-1">
+                                    <span className="text-[10px] uppercase tracking-wider text-[#C0DBAC] font-bold block mb-1">
+                                      ↳ Chi tiết 4 hạng phòng:
+                                    </span>
+                                    <div className="grid gap-1.5">
+                                      {node.children
+                                        .filter((child) => !filterKeyFlowOnly || child.isKeyFlow)
+                                        .map((child) => {
+                                          const isChildActive = currentUrl === child.href;
+                                          return (
+                                            <button
+                                              key={child.order}
+                                              onClick={() => onNavigate?.(child.href)}
+                                              className={`group flex items-center justify-between rounded-lg border px-3 py-1.5 text-left transition-all ${
+                                                child.isKeyFlow
+                                                  ? "border-[#FFD99C] bg-[#FFD99C]/20 text-white shadow-sm ring-1 ring-[#FFD99C]/30"
+                                                  : isChildActive
+                                                  ? "border-[#C0DBAC] bg-[#004121]/40 text-white"
+                                                  : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
+                                              }`}
+                                            >
+                                              <div className="flex items-center gap-2 min-w-0 pr-1">
+                                                <span className={`font-mono text-[10px] font-bold ${
+                                                  child.isKeyFlow ? "text-[#FFD99C]" : "text-[#C0DBAC]"
+                                                }`}>
+                                                  {child.order}
+                                                </span>
+                                                <span className="text-xs text-white truncate group-hover:text-[#FFD99C]">
+                                                  {child.name}
+                                                </span>
+                                                {child.isKeyFlow && (
+                                                  <span className="rounded bg-[#FFD99C] px-1 text-[8px] font-black text-[#004121] shrink-0">
+                                                    ★ KEY BƯỚC 3
+                                                  </span>
+                                                )}
+                                              </div>
+                                              <ArrowUpRight className="h-3 w-3 text-white/30 group-hover:text-white shrink-0 ml-1.5" />
+                                            </button>
+                                          );
+                                        })}
+                                    </div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                      </div>
                     </div>
 
-                    {/* Nodes inside this branch */}
-                    <div className="space-y-3">
-                      {branch.nodes.map((node) => {
-                        const Icon = node.icon;
-                        const isNodeActive = currentUrl === node.href;
-
-                        return (
-                          <div key={node.id} className="space-y-2">
-                            <button
-                              onClick={() => onNavigate?.(node.href)}
-                              className={`group relative flex w-full items-center justify-between rounded-xl border px-3.5 py-3 text-left transition-all ${
-                                node.isKeyFlow
-                                  ? "border-orange-500/60 bg-gradient-to-r from-orange-950/30 to-[#1e1b29] hover:border-orange-400 shadow-md shadow-orange-500/5"
-                                  : isNodeActive
-                                  ? "border-violet-500 bg-violet-500/10"
-                                  : "border-white/10 bg-[#171b26] hover:border-white/25 hover:bg-[#1c2130]"
-                              }`}
-                            >
-                              <div className="flex items-center gap-3 min-w-0">
-                                <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-lg ${
-                                  node.isKeyFlow ? "bg-orange-500/20 text-orange-300" : "bg-white/5 text-white/70"
-                                }`}>
-                                  <Icon className="h-4 w-4" />
-                                </div>
-                                <div className="min-w-0">
-                                  <div className="flex items-center gap-2 flex-wrap">
-                                    <h4 className="font-semibold text-white group-hover:text-orange-300 transition-colors text-sm">
-                                      {node.name}
-                                    </h4>
-                                    {node.isKeyFlow && node.keyFlowStep && (
-                                      <span className="rounded bg-orange-500 px-1.5 py-0.2 text-[9px] font-black uppercase tracking-wider text-white">
-                                        ★ BƯỚC {node.keyFlowStep}
-                                      </span>
-                                    )}
-                                  </div>
-                                  <p className="font-mono text-[10px] text-white/40">{node.href}</p>
-                                </div>
-                              </div>
-                              <ArrowUpRight className="h-4 w-4 shrink-0 text-white/30 group-hover:text-orange-400 transition-colors ml-2" />
-                            </button>
-
-                            {/* Sub-children (e.g. 4 Suite Detail Pages) */}
-                            {node.children && node.children.length > 0 && (
-                              <div className="ml-5 border-l-2 border-dashed border-emerald-500/40 pl-3.5 space-y-1.5 pt-1">
-                                <span className="text-[10px] uppercase tracking-wider text-emerald-400/80 font-bold block mb-1">
-                                  ↳ 4 Hạng phòng chi tiết:
-                                </span>
-                                <div className="grid gap-2 sm:grid-cols-2">
-                                  {node.children.map((child) => {
-                                    const isChildActive = currentUrl === child.href;
-                                    return (
-                                      <button
-                                        key={child.id}
-                                        onClick={() => onNavigate?.(child.href)}
-                                        className={`group flex items-center justify-between rounded-lg border px-3 py-2 text-left transition-all ${
-                                          child.isKeyFlow
-                                            ? "border-orange-500/80 bg-orange-500/15 shadow-sm shadow-orange-500/10"
-                                            : isChildActive
-                                            ? "border-emerald-500 bg-emerald-500/10 text-white"
-                                            : "border-white/10 bg-[#141722] hover:border-white/20 hover:bg-[#1a1f2d]"
-                                        }`}
-                                      >
-                                        <div className="min-w-0 pr-1">
-                                          <div className="flex items-center gap-1.5 flex-wrap">
-                                            <span className="text-xs font-medium text-white truncate group-hover:text-orange-300">
-                                              {child.name}
-                                            </span>
-                                            {child.isKeyFlow && (
-                                              <span className="rounded bg-orange-500 px-1 text-[8px] font-bold text-white shrink-0">
-                                                ★ BƯỚC 3
-                                              </span>
-                                            )}
-                                          </div>
-                                          <span className="text-[10px] text-white/40 font-mono block mt-0.5">{child.href}</span>
-                                        </div>
-                                        <ArrowUpRight className="h-3 w-3 text-white/30 group-hover:text-white shrink-0 ml-1.5" />
-                                      </button>
-                                    );
-                                  })}
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        );
-                      })}
+                    <div className="mt-4 border-t border-white/10 pt-2 text-[10px] text-white/40">
+                      {branch.role}
                     </div>
                   </div>
                 );
@@ -460,31 +472,51 @@ export function SitemapTab({ onNavigate, currentUrl }: Props) {
         </div>
       )}
 
-      {/* ── VIEW 2: GRID / CARD ARCHITECTURE VIEW ── */}
+      {/* ── VIEW 2: ORDERED GRID ARCHITECTURE VIEW ── */}
       {viewMode === "grid" && (
         <div className="space-y-6">
-          {mindMapData.map((branch) => (
-            <div key={branch.branchName} className="rounded-2xl border border-white/10 bg-[#161922] p-5">
-              <div className="mb-3 flex items-center justify-between">
-                <h3 className="font-semibold text-white text-sm">{branch.branchName}</h3>
+          {sitemapBranches
+            .filter((branch) => !filterKeyFlowOnly || branch.isKeyBranch)
+            .map((branch) => (
+              <div key={branch.branchId} className="rounded-2xl border border-[#C0DBAC]/20 bg-[#0a1410] p-5 shadow-lg">
+                <div className="mb-3.5 flex items-center justify-between border-b border-white/10 pb-2.5">
+                  <div className="flex items-center gap-2">
+                    <span className="rounded bg-[#004121] px-2 py-0.5 font-mono text-[10px] font-bold text-[#FFD99C] border border-[#FFD99C]/30">
+                      {branch.branchOrder}
+                    </span>
+                    <h3 className="font-serif font-bold text-white text-sm">{branch.title}</h3>
+                  </div>
+                  <span className="text-[11px] text-white/40">{branch.nodes.length} màn hình</span>
+                </div>
+
+                <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                  {branch.nodes
+                    .filter((n) => !filterKeyFlowOnly || n.isKeyFlow || n.children?.some((c) => c.isKeyFlow))
+                    .map((n) => (
+                      <button
+                        key={n.order}
+                        onClick={() => onNavigate?.(n.href)}
+                        className={`flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
+                          n.isKeyFlow
+                            ? "border-[#FFD99C] bg-[#004121] text-white shadow-md shadow-[#FFD99C]/10"
+                            : "border-white/10 bg-white/5 hover:border-white/20 hover:bg-white/10"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5 min-w-0">
+                          <span className={`font-mono text-xs font-bold ${n.isKeyFlow ? "text-[#FFD99C]" : "text-[#C0DBAC]"}`}>
+                            {n.order}
+                          </span>
+                          <div className="min-w-0">
+                            <span className="font-medium text-white text-xs block truncate">{n.name}</span>
+                            <span className="font-mono text-[10px] text-white/40 block mt-0.5">{n.href}</span>
+                          </div>
+                        </div>
+                        <ArrowUpRight className={`h-3.5 w-3.5 shrink-0 ml-2 ${n.isKeyFlow ? "text-[#FFD99C]" : "text-white/30"}`} />
+                      </button>
+                    ))}
+                </div>
               </div>
-              <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-                {branch.nodes.map((n) => (
-                  <button
-                    key={n.id}
-                    onClick={() => onNavigate?.(n.href)}
-                    className="flex items-center justify-between rounded-xl border border-white/10 bg-black/20 px-3.5 py-3 text-left transition-colors hover:border-white/30 hover:bg-black/40"
-                  >
-                    <div>
-                      <span className="font-semibold text-white text-xs">{n.name}</span>
-                      <span className="font-mono text-[10px] text-white/35 block mt-0.5">{n.href}</span>
-                    </div>
-                    <ArrowUpRight className="h-3.5 w-3.5 text-orange-400 shrink-0 ml-2" />
-                  </button>
-                ))}
-              </div>
-            </div>
-          ))}
+            ))}
         </div>
       )}
     </div>
