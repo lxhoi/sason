@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Check, Copy, Layers, Type, Move, Box } from "lucide-react";
+import { Check, Copy, Layers, Type, Move, Sparkles, ExternalLink, Sliders } from "lucide-react";
+import { AILoadingState, type AILoadingStateVariant } from "@/components/cupertino/ai-loading-state";
+import { CupertinoSegmentedControl } from "@/components/cupertino/segmented-control";
 
 const colorTokens = [
   { name: "forest", hex: "#004121", role: "Primary Brand Color", usage: "Headers, primary buttons, hero accents, footer background", textLight: true },
@@ -241,6 +243,90 @@ export function DesignSystemTab() {
                   </span>
                 </div>
               ))}
+            </div>
+          </div>
+        </section>
+
+        {/* 4. React Cupertino UI Library & Apple Intelligence Atoms */}
+        <section>
+          <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <Sparkles className="h-4 w-4 text-violet-400" />
+              <h2 className="text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
+                4. Thư Viện React Cupertino UI (Apple iOS Liquid Glass)
+              </h2>
+            </div>
+            <a
+              href="https://react-cupertino-ui.pro/storybook/?path=/docs/atoms-ailoadingstate--docs"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 rounded-full border border-violet-500/30 bg-violet-500/10 px-3 py-1 text-xs text-violet-300 hover:bg-violet-500/20 transition-colors"
+            >
+              <span>Xem tài liệu Storybook</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          </div>
+
+          <div className="grid gap-6 md:grid-cols-2">
+            {/* AI Loading State Atom */}
+            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-6 backdrop-blur-2xl">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="rounded bg-violet-500/20 px-2 py-0.5 font-mono text-[10px] text-violet-300">
+                    Atoms / AILoadingState
+                  </span>
+                  <h3 className="mt-2 text-lg font-bold text-white">Apple Intelligence Orb</h3>
+                  <p className="text-xs text-white/50">Trạng thái nạp tương tác dạng cầu phát sáng iridescent</p>
+                </div>
+              </div>
+
+              <div className="mt-6 flex flex-col gap-3 rounded-xl border border-white/10 bg-black/40 p-4">
+                <span className="text-[10px] uppercase tracking-wider text-white/30 font-semibold">
+                  3 Trạng thái tương tác (Click vào quả cầu để chuyển trạng thái):
+                </span>
+                <div className="flex flex-col gap-2.5">
+                  <AILoadingState variant="thinking" message="Phân tích luồng đặt phòng..." interactive />
+                  <AILoadingState variant="generating" message="Khởi tạo giao diện Cupertino..." interactive />
+                  <AILoadingState variant="searching" message="Tìm kiếm hạng phòng phù hợp..." interactive />
+                </div>
+              </div>
+            </div>
+
+            {/* Cupertino Segmented Control Atom */}
+            <div className="rounded-2xl border border-white/15 bg-white/[0.04] p-6 backdrop-blur-2xl">
+              <span className="rounded bg-indigo-500/20 px-2 py-0.5 font-mono text-[10px] text-indigo-300">
+                Molecules / SegmentedControl
+              </span>
+              <h3 className="mt-2 text-lg font-bold text-white">Cupertino Segmented Control</h3>
+              <p className="text-xs text-white/50">Thanh chuyển tab viên thuốc chuẩn iOS với hiệu ứng kính mờ</p>
+
+              <div className="mt-6 flex flex-col gap-4 rounded-xl border border-white/10 bg-black/40 p-4">
+                <span className="text-[10px] uppercase tracking-wider text-white/30 font-semibold">
+                  Demo Segmented Control:
+                </span>
+                <CupertinoSegmentedControl
+                  options={[
+                    { value: "day", label: "Hôm nay" },
+                    { value: "week", label: "Tuần này" },
+                    { value: "month", label: "Tháng này" },
+                  ]}
+                  value="day"
+                  onChange={() => {}}
+                  size="md"
+                />
+              </div>
+
+              {/* Liquid Glass Materials */}
+              <div className="mt-4 grid grid-cols-2 gap-2 text-center text-xs">
+                <div className="rounded-xl border border-white/15 bg-white/10 p-3 backdrop-blur-xl">
+                  <span className="font-semibold text-white block">Ultra Thin Material</span>
+                  <span className="text-[10px] text-white/40">blur(24px) saturate(180%)</span>
+                </div>
+                <div className="rounded-xl border border-white/20 bg-white/20 p-3 backdrop-blur-2xl">
+                  <span className="font-semibold text-white block">Regular Material</span>
+                  <span className="text-[10px] text-white/40">blur(32px) saturate(190%)</span>
+                </div>
+              </div>
             </div>
           </div>
         </section>

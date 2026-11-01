@@ -9,6 +9,8 @@ import {
 } from "lucide-react";
 import { SitemapTab } from "@/components/dev-panel/sitemap-tab";
 import { DesignSystemTab } from "@/components/dev-panel/design-system-tab";
+import { CupertinoSegmentedControl, type SegmentedControlOption } from "@/components/cupertino/segmented-control";
+import { AILoadingState } from "@/components/cupertino/ai-loading-state";
 
 type View = "prototype" | "design" | "sitemap";
 
@@ -220,49 +222,29 @@ export default function DevPage() {
 
         <div className="h-4 w-px bg-white/10 hidden sm:block" />
 
-        {/* Tab Pills */}
-        <div className="flex items-center gap-1.5 overflow-x-auto py-0.5 no-scrollbar">
-          {/* Prototype Tab - Orange highlight like TutorNest */}
-          <button
-            onClick={() => setView("prototype")}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-semibold transition-all shrink-0 ${
-              view === "prototype"
-                ? "bg-[#ea580c] text-white shadow-md shadow-orange-500/20 ring-1 ring-orange-400/30"
-                : "border border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
-            }`}
-          >
-            <Play className="h-3 w-3 fill-current" />
-            <span>Interactive Prototype</span>
-          </button>
-
-          {/* Design System */}
-          <button
-            onClick={() => setView("design")}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-all shrink-0 ${
-              view === "design"
-                ? "bg-emerald-600 text-white shadow-md shadow-emerald-500/20 ring-1 ring-emerald-400/30"
-                : "border border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
-            }`}
-          >
-            <Palette className="h-3.5 w-3.5" />
-            <span>Design System</span>
-          </button>
-
-          {/* Sitemap */}
-          <button
-            onClick={() => setView("sitemap")}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-xs font-medium transition-all shrink-0 ${
-              view === "sitemap"
-                ? "bg-violet-600 text-white shadow-md shadow-violet-500/20 ring-1 ring-violet-400/30"
-                : "border border-white/10 bg-white/5 text-white/60 hover:border-white/20 hover:text-white"
-            }`}
-          >
-            <Map className="h-3.5 w-3.5" />
-            <span>Sitemap</span>
-          </button>
+        {/* Cupertino iOS Segmented Control Tab Bar */}
+        <div className="flex items-center">
+          <CupertinoSegmentedControl
+            options={[
+              { value: "prototype", label: "Interactive Prototype", icon: <Play className="h-3 w-3 fill-current" /> },
+              { value: "design",    label: "Design System",         icon: <Palette className="h-3.5 w-3.5" /> },
+              { value: "sitemap",   label: "Sitemap",               icon: <Map className="h-3.5 w-3.5" /> },
+            ]}
+            value={view}
+            onChange={(val) => setView(val as View)}
+            size="md"
+          />
         </div>
 
         <div className="flex-1" />
+
+        {/* React Cupertino UI - AI Loading State Widget */}
+        <AILoadingState
+          variant="generating"
+          message="v2.0 Cupertino"
+          interactive
+          className="hidden xl:inline-flex scale-[0.78] origin-right py-1 px-2.5"
+        />
 
         {/* Right Tools (Device Switcher & Controls) */}
         {view === "prototype" && (
